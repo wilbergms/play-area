@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Apan Speech</title></head><body><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apan Speech Cryptographic Tool</title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #1e1e2f;
+      color: #f8f8f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #50fa7b;
+    }
+    input, button, textarea {
+      font-size: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      margin: 10px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+    input, textarea {
+      width: 80%;
+      background-color: #282a36;
+      color: #f8f8f2;
+    }
+    button {
+      background-color: #50fa7b;
+      color: #282a36;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #6272a4;
+      color: #f8f8f2;
+    }
+    textarea {
+      height: 150px;
+      resize: none;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-around;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Apan Speech Cryptographic Tool</h1>
+    <p>Encode or decode text using the Apan speech system.</p>
+    <input type="text" id="inputText" placeholder="Enter text to encode or decode">
+    <div class="button-group">
+      <button onclick="encodeApan()">Encode</button>
+      <button onclick="decodeApan()">Decode</button>
+    </div>
+    <h2>Output:</h2>
+    <textarea id="outputText" readonly></textarea>
+  </div>
+
+  <script>
+    function encodeApan() {
+      const vowels = ['a', 'e', 'i', 'o', 'u'];
+      let input = document.getElementById('inputText').value.trim().toLowerCase();
+      let encoded = '';
+
+      // Break input into syllables (basic assumption: vowel ends a syllable)
+      const syllables = input.match(/[^aeiou]*[aeiou]?/g).filter(s => s); // Regex splits on consonant-vowel pattern
+
+      for (let syllable of syllables) {
+        if (syllable === '') continue;
+
+        let lastVowel = syllable.match(/[aeiou]/)?.[0]; // Find the last vowel in the syllable
+        if (!lastVowel) {
+          // If no vowel is found, keep the syllable as is (e.g., for special cases)
+          encoded += syllable;
+          continue;
+        }
+
+        let filler = 'p' + lastVowel; // Create the "p + vowel" filler
+        if (syllable.match(/[aeiou]$/)) {
+          // Ends with a vowel
+          encoded += syllable + filler;
+        } else {
+          // Ends with a consonant
+          let consonant = syllable[syllable.length - 1]; // Extract the ending consonant
+          encoded += syllable.slice(0, -1) + filler + consonant;
+        }
+      }
+
+      document.getElementById('outputText').value = encoded;
+    }
+
+    function decodeApan() {
+      let input = document.getElementById('inputText').value.trim().toLowerCase();
+      let decoded = input;
+
+      // Regex matches "p + vowel" fillers and removes them, handling consonants after fillers
+      decoded = decoded.replace(/p([aeiou])\1/g, ''); // Remove fillers after vowels
+      decoded = decoded.replace(/p([aeiou])([^aeiou])/g, '$2'); // Handle fillers before consonants
+
+      document.getElementById('outputText').value = decoded;
+    }
+  </script>
+</body>
+</html></body></html>
