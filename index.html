@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Apan Speech</title></head><body><!DOCTYPE html>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Apan Speech</title></head><body><!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Apan Speech</title></head><body><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -103,15 +103,38 @@
     }
 
     function decodeApan() {
-      let input = document.getElementById('inputText').value.trim().toLowerCase();
-      let decoded = input;
+  let input = document.getElementById('inputText').value.trim().toLowerCase();
+  let words = input.split(' '); // Split input into words
+  let decodedWords = words.map(word => {
+    let decoded = '';
+    let i = 0;
 
-      // Regex matches "p + vowel" fillers and removes them, handling consonants after fillers
-      decoded = decoded.replace(/p([aeiou])\1/g, ''); // Remove fillers after vowels
-      decoded = decoded.replace(/p([aeiou])([^aeiou])/g, '$2'); // Handle fillers before consonants
+    while (i < word.length) {
+      let current = word[i];
+      let next = word[i + 1];
+      let nextVowel = word[i + 2];
 
-      document.getElementById('outputText').value = decoded;
+      // Check if it's a filler (pa, pe, pi, po, pu)
+      if (next === 'p' && ['a', 'e', 'i', 'o', 'u'].includes(nextVowel)) {
+        // If current char is vowel and matches filler vowel
+        if ((['a', 'e', 'i', 'o', 'u'].includes(current) && current === nextVowel) || 
+            (['a', 'e', 'i', 'o', 'u'].includes(current))) {
+          decoded += current; // Add vowel only
+          i += 3; // Skip "p" and filler vowel
+        } else {
+          decoded += current; // Keep as-is
+          i++;
+        }
+      } else {
+        decoded += current; // Keep consonant or non-filler
+        i++;
+      }
     }
+    return decoded;
+  });
+
+  document.getElementById('outputText').value = decodedWords.join(' ').trim();
+}
   </script>
 </body>
-</html></body></html>
+</html></body></html></body></html>
